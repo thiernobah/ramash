@@ -6,13 +6,15 @@ import urllib.request
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 import os
+import urllib3
 
 class Crawler:
     def __init__(self, start_url):
         self.start_url = start_url
         h = urlparse(start_url)
         self.host = h[1]
-
+        self.http = urllib3.PoolManager()
+    '''
     def neighbor(self, url):
         try:
             remote_data = urllib.request.urlopen(url)
@@ -21,6 +23,14 @@ class Crawler:
             return soup
         except:
             print("could not open url %s"  %url)
+    '''
+    def neighbor(self,url):
+
+         response = self.http.request("GET",url)
+         html = response.data
+         #print(html)
+         soup = BeautifulSoup(html,"lxml")
+         return soup
 
     def bfs(self):
         url = []
@@ -50,13 +60,6 @@ class Crawler:
                 pass
 
 
-c = Crawler("http://www.lequipe.fr/Directs/")
+c = Crawler("https://www.google.fr/search?q=google&oq=google&aqs=chrome..69i57j0l2j69i65l3.4543j0j4&client=ubuntu-browser&sourceid=chrome&es_sm=91&ie=UTF-8#q=google&tbm=nws")
 s = c.bfs()
 
-'''
-url = 'http://www.looping.com/uollo/mo#klll#lin'
-url=url.split('#')[0]
-
-print(url)
-
-'''
